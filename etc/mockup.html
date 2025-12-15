@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant POS Mockup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .iphone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 30px;
+            background-color: #000;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            z-index: 50;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-200 min-h-screen flex items-center justify-center font-sans p-4">
+
+    <!-- Mobile Device Frame -->
+    <div
+        class="relative bg-white h-[800px] w-[375px] rounded-[3rem] shadow-2xl border-8 border-gray-900 overflow-hidden flex flex-col">
+
+        <!-- Notch -->
+        <div class="iphone-notch"></div>
+
+        <!-- Status Bar Mock -->
+        <div class="h-12 w-full bg-white flex justify-between items-end px-6 pb-2 text-xs font-bold text-gray-800 z-40">
+            <span>9:41</span>
+            <div class="flex gap-1">
+                <i class="fas fa-signal"></i>
+                <i class="fas fa-wifi"></i>
+                <i class="fas fa-battery-full"></i>
+            </div>
+        </div>
+
+        <!-- APP CONTENT AREA -->
+        <div id="app-content" class="flex-1 overflow-y-auto no-scrollbar relative bg-gray-50">
+
+            <!-- VIEW 1: INPUT / MENU -->
+            <div id="view-menu" class="p-4 pb-24">
+                <div class="flex justify-between items-center mb-6 mt-2">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Menu</h1>
+                        <!-- <p class="text-gray-500 text-sm">Table #4</p> -->
+                    </div>
+                    <button onclick="switchTab('history')" class="bg-gray-100 p-2 rounded-full h-10 w-10 text-gray-600">
+                        <i class="fas fa-history"></i>
+                    </button>
+                </div>
+
+                <!-- Menu Grid -->
+                <div id="menu-list" class="space-y-4">
+                    <!-- Items injected by JS -->
+                </div>
+            </div>
+
+            <!-- VIEW 2: CONFIRMATION -->
+            <div id="view-confirm" class="hidden h-full flex flex-col bg-white">
+                <div class="p-4 border-b flex items-center gap-4 mt-2">
+                    <button onclick="goBack()" class="p-2 hover:bg-gray-100 rounded-full"><i
+                            class="fas fa-arrow-left"></i></button>
+                    <h2 class="text-xl font-bold">Order Summary</h2>
+                </div>
+
+                <div id="cart-list" class="flex-1 overflow-y-auto p-4 space-y-4">
+                    <!-- Cart items injected by JS -->
+                </div>
+
+                <div class="p-6 bg-white border-t shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+                    <div class="flex justify-between mb-2 text-sm text-gray-600">
+                        <span>Subtotal</span>
+                        <span id="summ-subtotal">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between mb-4 text-sm text-gray-600">
+                        <span>Tax (10%)</span>
+                        <span id="summ-tax">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between mb-6 text-xl font-bold text-gray-900">
+                        <span>Total</span>
+                        <span id="summ-total">Rp 0</span>
+                    </div>
+                    <button onclick="goToPayment()"
+                        class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-95">
+                        Proceed to Payment
+                    </button>
+                </div>
+            </div>
+
+            <!-- VIEW 3: PAYMENT (QRIS) -->
+            <div id="view-payment" class="hidden h-full flex flex-col bg-white">
+                <div class="p-4 flex items-center gap-4 mt-2">
+                    <button onclick="navigateTo('view-confirm')" class="p-2 hover:bg-gray-100 rounded-full"><i
+                            class="fas fa-arrow-left"></i></button>
+                    <h2 class="text-xl font-bold">Payment</h2>
+                </div>
+
+                <!-- STATE: SCAN QR -->
+                <div id="pay-mode-scan" class="flex-1 flex flex-col">
+                    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+                        <div class="bg-blue-50 text-blue-800 px-4 py-1 rounded-full text-xs font-bold mb-6">QRIS PAYMENT
+                        </div>
+
+                        <h3 class="text-3xl font-bold text-gray-900 mb-2" id="pay-display-total">Rp 0</h3>
+                        <p class="text-gray-500 mb-8">Scan to pay</p>
+
+                        <!-- QR Code Placeholder -->
+                        <div class="w-64 h-64 bg-white border-4 border-gray-900 rounded-xl p-2 mb-8 relative shadow-lg">
+                            <div
+                                class="w-full h-full bg-gray-900 flex items-center justify-center overflow-hidden relative">
+                                <!-- Abstract QR Pattern -->
+                                <div
+                                    class="absolute inset-0 opacity-50 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')]">
+                                </div>
+                                <div class="z-10 bg-white p-2 rounded text-xl font-bold">QRIS</div>
+                            </div>
+                            <div class="absolute -bottom-6 left-0 w-full text-center text-xs text-gray-400">ID:
+                                9384-2938-12</div>
+                        </div>
+
+                        <div id="payment-status" class="text-orange-500 font-medium animate-pulse mb-8">
+                            <i class="fas fa-spinner fa-spin mr-2"></i> Waiting for payment...
+                        </div>
+                    </div>
+
+                    <div class="p-6">
+                        <button onclick="completePayment()"
+                            class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-95">
+                            <i class="fas fa-check mr-2"></i> Payment Received
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STATE: SUCCESS & PRINT -->
+                <div id="pay-mode-success"
+                    class="hidden flex-1 flex flex-col items-center justify-center p-8 text-center bg-white">
+                    <div
+                        class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 animate-bounce">
+                        <i class="fas fa-check text-4xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Payment Successful!</h3>
+                    <p class="text-gray-500 mb-8">Order #<span id="success-order-id">--</span> has been processed.</p>
+
+                    <div class="w-full space-y-3">
+                        <button onclick="printBill()"
+                            class="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-2 transition transform active:scale-95">
+                            <i class="fas fa-print"></i> Print Receipt
+                        </button>
+
+                        <button onclick="finishPaymentFlow()"
+                            class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-4 rounded-xl transition">
+                            Done (Go to History)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 4: HISTORY -->
+            <div id="view-history" class="hidden p-4 pb-24">
+                <div class="flex justify-between items-center mb-6 mt-2">
+                    <h1 class="text-2xl font-bold text-gray-800">Order History</h1>
+                    <button onclick="switchTab('menu')" class="bg-gray-100 p-2 rounded-full h-10 w-10 text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div id="history-list" class="space-y-4">
+                    <!-- History items injected by JS -->
+                    <div class="text-center text-gray-400 mt-10">No recent orders</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Floating Cart Button (Only visible on Menu) -->
+        <div id="fab-cart"
+            class="absolute bottom-6 left-6 right-6 z-40 transition-transform duration-300 translate-y-24">
+            <button onclick="navigateTo('view-confirm')"
+                class="w-full bg-gray-900 text-white p-4 rounded-2xl shadow-xl flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="bg-orange-500 text-white text-xs font-bold h-6 w-6 rounded-full flex items-center justify-center"
+                        id="fab-count">0</div>
+                    <span class="font-semibold">View Order</span>
+                </div>
+                <span class="font-bold" id="fab-total">Rp 0</span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- JavaScript for Interaction Logic -->
+    <script>
+        // --- DATA ---
+        const menuItems = [
+            { id: 1, name: "Nasi Goreng Special", price: 25000, img: "rice", color: "bg-orange-100" },
+            { id: 2, name: "Iced Tea Jumbo", price: 8000, img: "glass-water", color: "bg-amber-100" },
+            { id: 3, name: "Chicken Satay (10x)", price: 30000, img: "bacon", color: "bg-red-100" },
+            { id: 4, name: "Fried Bananas", price: 15000, img: "stroopwafel", color: "bg-yellow-100" },
+        ];
+
+        let cart = []; // { itemId, qty }
+        let history = []; // { id, date, total, itemsCount }
+        let currentCompletedOrderId = null;
+
+        // --- RENDER MENU ---
+        function renderMenu() {
+            const container = document.getElementById('menu-list');
+            container.innerHTML = menuItems.map(item => `
+                <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex gap-4">
+                    <!-- Image Placeholder -->
+                    <div class="w-24 h-24 ${item.color} rounded-xl flex items-center justify-center text-3xl text-gray-400 shrink-0">
+                        <i class="fas fa-${item.img}"></i>
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="flex-1 flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-bold text-gray-800">${item.name}</h3>
+                            <p class="text-orange-600 font-bold">Rp ${item.price.toLocaleString()}</p>
+                        </div>
+                        
+                        <!-- Input Control -->
+                        <div class="flex items-center justify-between mt-2">
+                            <div class="flex items-center bg-gray-100 rounded-lg">
+                                <button onclick="adjustTempQty(${item.id}, -1)" class="w-8 h-8 flex items-center justify-center text-gray-600 font-bold hover:bg-gray-200 rounded-l-lg">-</button>
+                                <input type="text" id="qty-input-${item.id}" value="1" class="w-8 text-center bg-transparent text-sm font-bold focus:outline-none" readonly>
+                                <button onclick="adjustTempQty(${item.id}, 1)" class="w-8 h-8 flex items-center justify-center text-gray-600 font-bold hover:bg-gray-200 rounded-r-lg">+</button>
+                            </div>
+                            <button onclick="addToCart(${item.id})" class="bg-gray-900 text-white h-8 px-4 rounded-lg text-xs font-bold hover:bg-gray-700 transition">ADD</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- RENDER CART ---
+        function renderCart() {
+            const container = document.getElementById('cart-list');
+            if (cart.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-400 mt-10">Cart is empty</div>';
+                updateTotals();
+                return;
+            }
+
+            container.innerHTML = cart.map(cartItem => {
+                const item = menuItems.find(i => i.id === cartItem.id);
+                return `
+                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 ${item.color} rounded-lg flex items-center justify-center text-gray-400 text-xs">
+                           <i class="fas fa-${item.img}"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-sm text-gray-800">${item.name}</div>
+                            <div class="text-xs text-gray-500">x${cartItem.qty}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold text-sm">Rp ${(item.price * cartItem.qty).toLocaleString()}</span>
+                        <button onclick="removeFromCart(${item.id})" class="text-red-400 hover:text-red-600"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            updateTotals();
+        }
+
+        // --- RENDER HISTORY ---
+        function renderHistory() {
+            const container = document.getElementById('history-list');
+            if (history.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-400 mt-10 text-sm">No orders yet.</div>';
+                return;
+            }
+            // Sort newest first
+            const sortedHistory = [...history].reverse();
+            container.innerHTML = sortedHistory.map(order => {
+                // Generate detailed item list HTML
+                const itemsListHtml = order.items.map(item => `
+                    <div class="flex justify-between text-xs text-gray-600">
+                        <span>${item.qty}x ${item.name}</span>
+                        <span>Rp ${(item.price * item.qty).toLocaleString()}</span>
+                    </div>
+                `).join('');
+
+                return `
+                <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded">PAID</span>
+                            <h4 class="font-bold text-gray-800 mt-1">Order #${order.id}</h4>
+                        </div>
+                        <span class="font-bold text-gray-800 text-lg">Rp ${order.total.toLocaleString()}</span>
+                    </div>
+
+                    <!-- Items Detail Section -->
+                    <div class="bg-gray-50 rounded-lg p-3 mb-3 space-y-1">
+                        ${itemsListHtml}
+                    </div>
+
+                    <div class="flex justify-between items-center text-xs text-gray-400 border-t pt-3 mt-2">
+                        <div>
+                            <span>${order.date}</span>
+                            <span class="mx-1">•</span>
+                            <span>${order.itemsCount} Items</span>
+                        </div>
+                        <button onclick="printBill(${order.id})" class="text-gray-600 font-bold border border-gray-300 rounded px-3 py-1.5 hover:bg-gray-100 flex items-center gap-1 transition">
+                            <i class="fas fa-print"></i> Reprint
+                        </button>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        // --- LOGIC ---
+
+        function adjustTempQty(id, delta) {
+            const input = document.getElementById(`qty-input-${id}`);
+            let val = parseInt(input.value);
+            val += delta;
+            if (val < 1) val = 1;
+            input.value = val;
+        }
+
+        function addToCart(id) {
+            const qtyInput = document.getElementById(`qty-input-${id}`);
+            const qty = parseInt(qtyInput.value);
+
+            const existing = cart.find(c => c.id === id);
+            if (existing) {
+                existing.qty += qty;
+            } else {
+                cart.push({ id, qty });
+            }
+
+            // Visual Feedback (Reset input)
+            qtyInput.value = 1;
+            updateTotals();
+
+            // Show FAB
+            document.getElementById('fab-cart').classList.remove('translate-y-24');
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(c => c.id !== id);
+            renderCart();
+            if (cart.length === 0) {
+                goBack(); // Auto back if empty
+            }
+        }
+
+        function updateTotals() {
+            let subtotal = 0;
+            let count = 0;
+            cart.forEach(c => {
+                const item = menuItems.find(i => i.id === c.id);
+                subtotal += item.price * c.qty;
+                count += c.qty;
+            });
+            const tax = subtotal * 0.1;
+            const total = subtotal + tax;
+
+            // DOM Updates
+            document.getElementById('fab-count').innerText = count;
+            document.getElementById('fab-total').innerText = 'Rp ' + total.toLocaleString();
+
+            // Summary Page
+            document.getElementById('summ-subtotal').innerText = 'Rp ' + subtotal.toLocaleString();
+            document.getElementById('summ-tax').innerText = 'Rp ' + tax.toLocaleString();
+            document.getElementById('summ-total').innerText = 'Rp ' + total.toLocaleString();
+
+            if (count === 0) {
+                document.getElementById('fab-cart').classList.add('translate-y-24');
+            }
+        }
+
+        // --- NAVIGATION ---
+
+        function navigateTo(viewId) {
+            // Hide all views
+            ['view-menu', 'view-confirm', 'view-payment', 'view-history'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            // Show target
+            document.getElementById(viewId).classList.remove('hidden');
+
+            if (viewId === 'view-confirm') renderCart();
+            if (viewId === 'view-history') renderHistory();
+
+            // Hide FAB on non-menu pages
+            if (viewId !== 'view-menu') {
+                document.getElementById('fab-cart').classList.add('hidden');
+            } else {
+                document.getElementById('fab-cart').classList.remove('hidden');
+                if (cart.length > 0) document.getElementById('fab-cart').classList.remove('translate-y-24');
+            }
+        }
+
+        function goBack() {
+            navigateTo('view-menu');
+        }
+
+        function goToPayment() {
+            if (cart.length === 0) return;
+
+            // Reset payment view state to SCAN mode
+            document.getElementById('pay-mode-scan').classList.remove('hidden');
+            document.getElementById('pay-mode-success').classList.add('hidden');
+
+            // Set payment total display
+            const totalStr = document.getElementById('summ-total').innerText;
+            document.getElementById('pay-display-total').innerText = totalStr;
+            navigateTo('view-payment');
+        }
+
+        function switchTab(tab) {
+            if (tab === 'history') {
+                renderHistory();
+                navigateTo('view-history');
+            } else {
+                navigateTo('view-menu');
+            }
+        }
+
+        function completePayment() {
+            // Calculate total numeric
+            let subtotal = 0;
+            let count = 0;
+
+            // Capture items details for history before clearing
+            const orderItems = cart.map(c => {
+                const item = menuItems.find(i => i.id === c.id);
+                subtotal += item.price * c.qty;
+                count += c.qty;
+                return {
+                    name: item.name,
+                    qty: c.qty,
+                    price: item.price
+                };
+            });
+
+            const total = subtotal * 1.1;
+
+            // Generate Order ID
+            const orderId = Math.floor(Math.random() * 90000) + 10000;
+            currentCompletedOrderId = orderId;
+
+            // Add to history
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+
+            history.push({
+                id: orderId,
+                date: dateStr,
+                total: total,
+                itemsCount: count,
+                items: orderItems // Store the items
+            });
+
+            // Clear Cart
+            cart = [];
+            updateTotals();
+
+            // Toggle UI to Success Mode
+            document.getElementById('pay-mode-scan').classList.add('hidden');
+            document.getElementById('pay-mode-success').classList.remove('hidden');
+            document.getElementById('success-order-id').innerText = orderId;
+        }
+
+        function printBill(orderId) {
+            const id = orderId || currentCompletedOrderId;
+            // In a real app, this would connect to a Bluetooth thermal printer
+            alert(`🖨️ Printing Receipt for Order #${id}...\n\n(Connecting to Thermal Printer...)`);
+        }
+
+        function finishPaymentFlow() {
+            switchTab('history');
+        }
+
+        // Init
+        renderMenu();
+
+    </script>
+</body>
+
+</html>
