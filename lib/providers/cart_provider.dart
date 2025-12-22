@@ -12,8 +12,16 @@ class CartItem {
 
 class CartProvider extends ChangeNotifier {
   final List<CartItem> _items = [];
+  String? _tableNumber;
 
   List<CartItem> get items => _items;
+
+  String? get tableNumber => _tableNumber;
+
+  void setTableNumber(String value) {
+    _tableNumber = value;
+    notifyListeners();
+  }
 
   int get count => _items.fold(0, (sum, item) => sum + item.quantity);
 
@@ -60,6 +68,7 @@ class CartProvider extends ChangeNotifier {
 
   void clearCart() {
     _items.clear();
+    _tableNumber = null;
     notifyListeners();
   }
 }

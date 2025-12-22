@@ -3,8 +3,30 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/cart_provider.dart';
 
-class OrderSummaryView extends StatelessWidget {
+class OrderSummaryView extends StatefulWidget {
   const OrderSummaryView({super.key});
+
+  @override
+  State<OrderSummaryView> createState() => _OrderSummaryViewState();
+}
+
+class _OrderSummaryViewState extends State<OrderSummaryView> {
+  late TextEditingController _tableNumberController;
+
+  @override
+  void initState() {
+    super.initState();
+    final cart = context.read<CartProvider>();
+    _tableNumberController = TextEditingController(
+      text: cart.tableNumber ?? '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _tableNumberController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,6 +170,23 @@ class OrderSummaryView extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
+                    TextField(
+                      controller: _tableNumberController,
+                      decoration: const InputDecoration(
+                        labelText: 'Table Number',
+                        hintText: 'Enter your table number',
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {
+                        context.read<CartProvider>().setTableNumber(value);
+                      },
+                    ),
+                    const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -200,6 +239,15 @@ class OrderSummaryView extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
+                          if (_tableNumberController.text.trim().isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please enter a table number'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                            return;
+                          }
                           Navigator.of(context).pushNamed('/payment');
                         },
                         style: ElevatedButton.styleFrom(

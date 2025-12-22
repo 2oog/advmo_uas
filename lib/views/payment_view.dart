@@ -50,7 +50,12 @@ class _PaymentViewState extends State<PaymentView>
       }).toList();
 
       // Create Order
-      final order = await _apiService.createOrder('QRIS', items);
+      final tableNumber = cart.tableNumber ?? '';
+      if (tableNumber.isEmpty) {
+        throw Exception('Table number is missing');
+      }
+
+      final order = await _apiService.createOrder('QRIS', tableNumber, items);
 
       // Clear cart
       cart.clearCart();
@@ -242,6 +247,15 @@ class _PaymentViewState extends State<PaymentView>
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Table: ${cart.tableNumber ?? "-"}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
                     ),
                     const SizedBox(height: 8),

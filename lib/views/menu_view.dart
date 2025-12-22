@@ -38,6 +38,15 @@ class _MenuViewState extends State<MenuView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50], // bg-gray-50
+      appBar: AppBar(
+        title: const Text(
+          'AdvWeb UAS POS Kasir Resto',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+      ),
       body: FutureBuilder<List<MenuItem>>(
         future: _menuFuture,
         builder: (context, snapshot) {
@@ -114,6 +123,8 @@ class _MenuViewState extends State<MenuView> {
                               child: Image.network(
                                 item.imageUrl!,
                                 fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
                                 errorBuilder: (context, error, stackTrace) {
                                   print(
                                     'Error loading image ${item.imageUrl}: $error',

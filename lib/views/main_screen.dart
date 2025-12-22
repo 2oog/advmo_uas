@@ -17,10 +17,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('AdvWeb UAS POS Kasir Resto'),
-        centerTitle: true,
-      ),
       body: IndexedStack(index: _currentIndex, children: _views),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,

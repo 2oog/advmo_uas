@@ -149,8 +149,9 @@ class _HistoryViewState extends State<HistoryView> {
                               ),
                             ),
                             const SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text(
-                              'Order #${order.id}',
+                              'Order #${order.id} ${order.tableNumber != null ? '(Table ${order.tableNumber})' : ''}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,

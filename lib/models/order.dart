@@ -10,6 +10,7 @@ class Order {
   final String paymentStatus;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? tableNumber;
   final List<OrderItem> orderItems;
 
   Order({
@@ -20,6 +21,7 @@ class Order {
     required this.totalAmount,
     required this.paymentMethod,
     required this.paymentStatus,
+    this.tableNumber,
     required this.createdAt,
     required this.updatedAt,
     required this.orderItems,
@@ -34,6 +36,7 @@ class Order {
       totalAmount: json['total_amount'] as int,
       paymentMethod: json['payment_method'] as String,
       paymentStatus: json['payment_status'] as String,
+      tableNumber: json['table_number'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       orderItems: (json['order_items'] as List<dynamic>)
@@ -51,6 +54,7 @@ class Order {
       'total_amount': totalAmount,
       'payment_method': paymentMethod,
       'payment_status': paymentStatus,
+      'table_number': tableNumber,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
       'order_items': orderItems.map((e) => e.toJson()).toList(),

@@ -19,7 +19,11 @@ class MenuItem {
 
   String? get imageUrl {
     if (imageAsset == null) return null;
-    return '${ApiService.imageBaseUrl}/$imageAsset';
+    String asset = imageAsset!;
+    if (asset.startsWith('/')) {
+      asset = asset.substring(1);
+    }
+    return '${ApiService.imageBaseUrl}/$asset';
   }
 
   factory MenuItem.fromJson(Map<String, dynamic> json) {

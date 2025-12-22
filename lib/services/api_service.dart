@@ -14,7 +14,7 @@ class ApiService {
     if (kIsWeb) {
       return 'http://localhost';
     } else if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://10.0.2.2';
+      return 'http://192.168.1.54';
     } else {
       return 'http://localhost';
     }
@@ -34,7 +34,7 @@ class ApiService {
     }
 
     dev.log(
-      '''[ApiService] ${response.request?.method} ${response.request?.url}, [Status]: ${response.statusCode}, [Body]: $body
+      '''${response.request?.method} ${response.request?.url}, [Status]: ${response.statusCode}, [Body]: $body
 ''',
       name: 'ApiService',
     );
@@ -88,6 +88,7 @@ class ApiService {
 
   Future<Order> createOrder(
     String paymentMethod,
+    String tableNumber,
     List<Map<String, dynamic>> items,
   ) async {
     final response = await http.post(
@@ -97,6 +98,7 @@ class ApiService {
       },
       body: jsonEncode(<String, dynamic>{
         'payment_method': paymentMethod,
+        'table_number': tableNumber,
         'items': items,
       }),
     );
