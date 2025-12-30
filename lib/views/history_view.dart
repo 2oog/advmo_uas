@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../models/order.dart';
 import '../services/api_service.dart';
+import '../services/bluetooth_print_service.dart';
 
 class HistoryView extends StatefulWidget {
   const HistoryView({super.key});
@@ -26,17 +28,24 @@ class _HistoryViewState extends State<HistoryView> {
     });
   }
 
-  void _printReceipt(int id) async {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('🖨️ Reprinting Order #$id...')));
+  void _printReceipt(Order order) async {
+    final printService = context.read<BluetoothPrintService>();
+
+    if (!printService.isConnected) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Printer not connected! Please go to Settings.'),
+        ),
+      );
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('🖨️ Reprinting Order #${order.id}...')),
+    );
+
     try {
-      final success = await _apiService.printOrder(id);
-      if (!success && mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Failed to print.')));
-      }
+      await printService.printReceipt(order);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
@@ -243,7 +252,7 @@ class _HistoryViewState extends State<HistoryView> {
                           ],
                         ),
                         OutlinedButton.icon(
-                          onPressed: () => _printReceipt(order.id),
+                          onPressed: () => _printReceipt(order),
                           icon: const Icon(
                             Icons.print,
                             size: 16,

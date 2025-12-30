@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../models/order.dart';
 import '../providers/cart_provider.dart';
 import '../services/api_service.dart';
+import '../services/bluetooth_print_service.dart';
 
 class PaymentView extends StatefulWidget {
   const PaymentView({super.key});
@@ -81,19 +82,22 @@ class _PaymentViewState extends State<PaymentView>
   Future<void> _printReceipt() async {
     if (_completedOrder == null) return;
     try {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('🖨️ Printing Receipt...')));
-      final success = await _apiService.printOrder(_completedOrder!.id);
-      if (mounted) {
-        if (!success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Failed to send print job to bridge.'),
-            ),
-          );
-        }
+      final printService = context.read<BluetoothPrintService>();
+
+      if (!printService.isConnected) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Printer not connected! Please go to Settings.'),
+          ),
+        );
+        return;
       }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('🖨️ Printing Receipt via Bluetooth...')),
+      );
+
+      await printService.printReceipt(_completedOrder!);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(

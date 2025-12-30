@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../services/api_service.dart';
 import '../models/menu_item.dart';
 import '../providers/cart_provider.dart';
+import 'dart:developer' as dev;
 
 class MenuView extends StatefulWidget {
   const MenuView({super.key});
@@ -126,8 +127,9 @@ class _MenuViewState extends State<MenuView> {
                                 width: double.infinity,
                                 height: double.infinity,
                                 errorBuilder: (context, error, stackTrace) {
-                                  print(
-                                    'Error loading image ${item.imageUrl}: $error',
+                                  dev.log(
+                                    '''Error loading image ${item.imageUrl}: $error''',
+                                    name: 'Menu View',
                                   );
                                   return const Center(
                                     child: Icon(
@@ -256,10 +258,7 @@ class _MenuViewState extends State<MenuView> {
           );
 
           return Padding(
-            padding: const EdgeInsets.only(
-              bottom: 16,
-              left: 32,
-            ), // Adjust for navigation bar if needed
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: GestureDetector(
               onTap: () {
                 Navigator.of(context).pushNamed('/summary');

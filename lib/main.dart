@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/cart_provider.dart';
+import 'services/bluetooth_print_service.dart';
 import 'views/main_screen.dart';
 import 'views/order_summary_view.dart';
 import 'views/payment_view.dart';
@@ -16,7 +17,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => CartProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => BluetoothPrintService()),
+      ],
       child: MaterialApp(
         title: 'AdvWeb UAS POS Kasir Resto',
         debugShowCheckedModeBanner: false,

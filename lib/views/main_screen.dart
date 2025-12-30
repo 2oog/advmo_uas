@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'history_view.dart';
 import 'menu_view.dart';
+import 'settings_view.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -12,7 +13,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _views = const [MenuView(), HistoryView()];
+  final List<Widget> _views = const [MenuView(), HistoryView(), SettingsView()];
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +36,10 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Menu',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
         ],
       ),
     );
